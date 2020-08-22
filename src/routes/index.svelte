@@ -1,6 +1,6 @@
 <script context="module">
   export function preload(page) {
-    return this.fetch("https://svelte-123.firebaseio.com/meetups.json")
+    return this.fetch("https://svelte-course.firebaseio.com/meetups.json")
       .then(res => {
         if (!res.ok) {
           throw new Error("Fetching meetups failed, please try again later!");
@@ -43,20 +43,31 @@
 
   export let fetchedMeetups;
 
+  let loadedMeetups = [];
   let editMode;
   let editedId;
   let isLoading;
+  let unsubscribe;
 
   const dispatch = createEventDispatcher();
 
   let favsOnly = false;
 
   $: filteredMeetups = favsOnly
-    ? fetchedMeetups.filter(m => m.isFavorite)
-    : fetchedMeetups;
+    ? loadedMeetups.filter(m => m.isFavorite)
+    : loadedMeetups;
 
   onMount(() => {
+    unsubscribe = meetups.subscribe(items => {
+      loadedMeetups = items;
+    })
     meetups.setMeetups(fetchedMeetups);
+  });
+
+  onDestroy(() => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
   });
 
   function setFilter(event) {
@@ -76,6 +87,10 @@
   function startEdit(event) {
     editMode = "edit";
     editedId = event.detail;
+  }
+
+  function startAdd() {
+    editMode = 'edit';
   }
 </script>
 
@@ -116,7 +131,7 @@
 {:else}
   <section id="meetup-controls">
     <MeetupFilter on:select={setFilter} />
-    <Button on:click={() => dispatch('add')}>New Meetup</Button>
+    <Button on:click={startAdd}>New Meetup</Button>
   </section>
   {#if filteredMeetups.length === 0}
     <p id="no-meetups">No meetups found, you can start adding some.</p>

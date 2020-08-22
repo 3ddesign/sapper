@@ -20,7 +20,7 @@
 
   function toggleFavorite() {
     isLoading = true;
-    fetch(`https://svelte-123.firebaseio.com/meetups/${id}.json`, {
+    fetch(`https://svelte-course.firebaseio.com/meetups/${id}.json`, {
       method: "PATCH",
       body: JSON.stringify({ isFavorite: !isFav }),
       headers: { "Content-Type": "application/json" }
