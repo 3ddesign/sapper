@@ -15,7 +15,7 @@
             id: key
           });
         }
-        return { fetchedMeetups: loadedMeetups };
+        return { fetchedMeetups: loadedMeetups.reverse() };
         // setTimeout(() => {
         //   isLoading = false;
         //   meetups.setMeetups(loadedMeetups.reverse());
@@ -60,7 +60,7 @@
   onMount(() => {
     unsubscribe = meetups.subscribe(items => {
       loadedMeetups = items;
-    })
+    });
     meetups.setMeetups(fetchedMeetups);
   });
 
@@ -90,7 +90,7 @@
   }
 
   function startAdd() {
-    editMode = 'edit';
+    editMode = "edit";
   }
 </script>
 
@@ -139,7 +139,7 @@
   <section id="meetups">
     {#each filteredMeetups as meetup (meetup.id)}
       <div transition:scale animate:flip={{ duration: 300 }}>
-        <MeetupItem id={meetup.id} title={meetup.title} subtitle={meetup.subtitle} description={meetup.description} imageUrl={meetup.imageUrl} email={meetup.contactEmail} address={meetup.address} isFav={meetup.isFavorite} on:showdetails on:edit />
+        <MeetupItem id={meetup.id} title={meetup.title} subtitle={meetup.subtitle} description={meetup.description} imageUrl={meetup.imageUrl} email={meetup.contactEmail} address={meetup.address} isFav={meetup.isFavorite} on:edit={startEdit} />
       </div>
     {/each}
   </section>
